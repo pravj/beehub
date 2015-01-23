@@ -10,6 +10,7 @@ import (
 
 const (
 	TOKEN_ENDPOINT string = "https://github.com/login/oauth/access_token"
+        USER_ENDPOINT string = "https://api.github.com/user"
 )
 
 type OauthController struct {
@@ -26,12 +27,39 @@ type response struct {
 	AccessToken string `json:"access_token"`
 }
 
+type credential struct {
+        Name string `json:"name"`
+        UserName string `json:"login"`
+        Email string `json:"email"`
+}
+
 func (this *OauthController) ParseCode() {
 	token := AccessToken(this.GetString("code"), beego.AppConfig.String("client_id"), beego.AppConfig.String("client_secret"))
+        name, username, email := Credentials(token)
 
 	this.Data["Website"] = token
 	this.Data["Email"] = "hackpravj@gmail.com"
 	this.TplNames = "index.tpl"
+}
+
+func Credentials(AccessToken string) (string, string, string) {
+        req, _ := http.NewRequest("GET", USER_ENDPOINT, nil)
+
+        AuthHeader := "token " + AccessToken
+        req.Header.Set("Authorization", AuthHeader)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+        client := &http.Client{}
+        res, _ := client.Do(req)
+
+        defer res.Body.Close()
+        body, _ := ioutil.ReadAll(res.Body)
+
+        var cred credential
+        json.Unmarshal(body, &cred)
+
+        return cred.Name, cred.UserName, cred.Email
 }
 
 func AccessToken(Code, ClientId, ClientSecret string) string {
