@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/astaxie/beego"
+	"github.com/pravj/beehub/models"
 	"io/ioutil"
 	"net/http"
 )
@@ -36,6 +37,15 @@ type credential struct {
 func (this *OauthController) ParseCode() {
 	token := AccessToken(this.GetString("code"), beego.AppConfig.String("client_id"), beego.AppConfig.String("client_secret"))
         name, username, email := Credentials(token)
+
+	user := models.User{Token: token, Name: name, UserName: username, Email: email}
+        models.CreateUser(&user)
+
+        sm := make(map[string]string)
+        sm["email"] = email
+        sm["name"] = name
+        sm["username"] = username
+        this.SetSession("beehub", sm)
 
 	this.Data["Website"] = token
 	this.Data["Email"] = "hackpravj@gmail.com"
