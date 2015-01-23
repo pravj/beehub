@@ -16,6 +16,7 @@ type User struct {
 	UserName string `orm:"size(128)"`
 	Email    string `orm:"size(128)"`
 	Token    string `orm:"size(128)"`
+        Avatar   string `orm:"size(128)"`
 }
 
 func init() {

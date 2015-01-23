@@ -32,13 +32,14 @@ type credential struct {
         Name string `json:"name"`
         UserName string `json:"login"`
         Email string `json:"email"`
+        Avatar string `json:"avatar_url"`
 }
 
 func (this *OauthController) ParseCode() {
 	token := AccessToken(this.GetString("code"), beego.AppConfig.String("client_id"), beego.AppConfig.String("client_secret"))
-        name, username, email := Credentials(token)
+        name, username, email, avatar := Credentials(token)
 
-	user := models.User{Token: token, Name: name, UserName: username, Email: email}
+	user := models.User{Token: token, Name: name, UserName: username, Email: email, Avatar: avatar}
         models.CreateUser(&user)
 
         sm := make(map[string]string)
@@ -47,12 +48,12 @@ func (this *OauthController) ParseCode() {
         sm["username"] = username
         this.SetSession("beehub", sm)
 
-        this.Data["Status"] = "logged-in"
         this.Data["Name"] = name
+        this.Data["Avatar"] = avatar
 	this.TplNames = "user.tpl"
 }
 
-func Credentials(AccessToken string) (string, string, string) {
+func Credentials(AccessToken string) (string, string, string, string) {
         req, _ := http.NewRequest("GET", USER_ENDPOINT, nil)
 
         AuthHeader := "token " + AccessToken
@@ -69,7 +70,7 @@ func Credentials(AccessToken string) (string, string, string) {
         var cred credential
         json.Unmarshal(body, &cred)
 
-        return cred.Name, cred.UserName, cred.Email
+        return cred.Name, cred.UserName, cred.Email, cred.Avatar
 }
 
 func AccessToken(Code, ClientId, ClientSecret string) string {
