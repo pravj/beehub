@@ -7,7 +7,7 @@
 </head>
 
 <body>
-  <a href="https://github.com/login/oauth/authorize?client_id={{.ClientID}}&scope=user:email">Login with GitHub</a>
   {{.Status}}
+  {{.Name}}
 </body>
 </html>

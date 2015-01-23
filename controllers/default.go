@@ -9,14 +9,20 @@ type MainController struct {
 }
 
 func (this *MainController) Get() {
-	this.Data["Website"] = "pravj.github.io"
-	this.Data["Email"] = "hackpravj@gmail.com"
+	this.Data["ClientID"] = beego.AppConfig.String("client_id")
+
+        v := this.GetSession("BeeHub")
+        if v == nil {
+          this.Data["status"] = "logged-out"
+        } else {
+          this.Data["status"] = "logged-in"
+        }
+
 	this.TplNames = "index.tpl"
 }
 
-func (this *MainController) Login() {
-	this.Data["Website"] = "pravj.github.io"
-	this.Data["Email"] = "hackpravj@gmail.com"
-	this.Data["ClientID"] = beego.AppConfig.String("client_id")
-	this.TplNames = "index.tpl"
+func (this *MainController) Logout() {
+  this.DelSession("BeeHub")
+  this.Redirect("/", 302)
+  return
 }

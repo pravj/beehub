@@ -47,9 +47,9 @@ func (this *OauthController) ParseCode() {
         sm["username"] = username
         this.SetSession("beehub", sm)
 
-	this.Data["Website"] = token
-	this.Data["Email"] = "hackpravj@gmail.com"
-	this.TplNames = "index.tpl"
+        this.Data["Status"] = "logged-in"
+        this.Data["Name"] = name
+	this.TplNames = "user.tpl"
 }
 
 func Credentials(AccessToken string) (string, string, string) {

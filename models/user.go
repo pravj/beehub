@@ -30,8 +30,8 @@ func AddUser(m *User) (id int64, err error) {
 	return
 }
 
-// CreateUser checks for existing user by email and
-// insert it, if the user is not already present.
+// CreateUser checks for an existing user's email and
+// create a new user instance, if no result found.
 func CreateUser(m *User) {
   o := orm.NewOrm()
   user := User{Email: m.Email}
