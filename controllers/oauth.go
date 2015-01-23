@@ -46,11 +46,11 @@ func (this *OauthController) ParseCode() {
         sm["email"] = email
         sm["name"] = name
         sm["username"] = username
+        sm["avatar"] = avatar
         this.SetSession("beehub", sm)
 
-        this.Data["Name"] = name
-        this.Data["Avatar"] = avatar
-	this.TplNames = "user.tpl"
+        this.Redirect("/", 302)
+        return
 }
 
 func Credentials(AccessToken string) (string, string, string, string) {

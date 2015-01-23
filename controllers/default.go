@@ -11,18 +11,19 @@ type MainController struct {
 func (this *MainController) Get() {
 	this.Data["ClientID"] = beego.AppConfig.String("client_id")
 
-        v := this.GetSession("BeeHub")
+        v := this.GetSession("beehub")
         if v == nil {
-          this.Data["status"] = "logged-out"
+          this.TplNames = "index.tpl"
         } else {
-          this.Data["status"] = "logged-in"
+          w, _ := v.(map[string]string)
+          this.Data["Name"] = w["name"]
+          this.Data["Avatar"] = w["avatar"]
+          this.TplNames = "user.tpl"
         }
-
-	this.TplNames = "index.tpl"
 }
 
 func (this *MainController) Logout() {
-  this.DelSession("BeeHub")
+  this.DelSession("beehub")
   this.Redirect("/", 302)
   return
 }
